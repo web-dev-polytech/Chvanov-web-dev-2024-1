@@ -69,28 +69,11 @@ section > div > div > img {
 	section > div {
 		grid-template-columns: repeat(2, 1fr);
 	}
-	.nav-bar-list {
-		justify-content: space-between;
-	}
 }
 
 
 @media all and (max-width: 600px) {
-	h1.page-header, h2.section-header {
-		/* margin: 70 auto; */
-		text-align: center;
-	}
-	.nav-bar-list {
-		flex-direction: column;
-		align-items: center;
-	}
-	a {
-		font-size: 29px !important;
-	}
 	section > div {
 		grid-template-columns: 1fr;
-	}
-	.footer-paragraph {
-		text-align: center;
 	}
 }
