@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=SUSE:wght@100..800&display=swap');
+
+
 /* STYLE RESET */
 * {
 	box-sizing: border-box;
@@ -7,11 +10,6 @@
 
 
 /* MAIN STYLES */
-
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=SUSE:wght@100..800&display=swap');
-
-
 body {
 	/* base font settings */
 	font-family: "Montserrat", sans-serif;
@@ -19,12 +17,17 @@ body {
 	font-weight: 400;
 	color: #000000;
 	color: #000000;
-
-	
+}
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 .padding-wrapper {
 	padding: 0 70px;
 }
+
+
 .page-main-header {
 	padding-bottom: 55px;
 }
@@ -38,7 +41,8 @@ body {
 }
 .nav-bar-list {
 	display: flex;
-	gap: 35px;
+	flex-wrap: wrap;
+	gap: 15px;
 	list-style: none;
 }
 .nav-bar-list-item-link {
@@ -49,8 +53,11 @@ body {
 
 	transition: 0.5s;
 }
+.active {
+	color: tomato;
+}
 .nav-bar-list-item-link:hover {
-	color: #b68315;
+	color: #e13a10;
 }
 
 .section-styles {
@@ -91,6 +98,7 @@ th, td {
 }
 
 .page-footer {
+	margin-top: auto;
 	padding-top: 50px;
 	padding-bottom: 50px;
 	background-color: #000000;
@@ -105,6 +113,6 @@ th, td {
 	transition: 0.5s;
 }
 .footer-paragraph-link:hover {
-	color: #e1d1bd;
+	color: #dda89f;
 	text-decoration: none;
 }
