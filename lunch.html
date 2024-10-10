@@ -105,6 +105,78 @@
                     </div>
                 </div>
             </section>
+
+            <section>
+                <h2 class="form-header">Сделать заказ</h2>
+                <form id="order" class="input-section" method="post" action="https://httpbin.org/post">
+                    <div class="input-form section-content-wrapper">
+                        <h3 class="input-form-header">Ваш заказ</h3>
+
+                        <label class="input-form-label" for="soup">Суп</label>
+                        <select id="soup" class="input-form-item" name="soup" form="order" required>
+                            <option value="" selected disabled>Выберите суп</option>
+                            <option value="gaspatcho">Гаспачо</option>
+                            <option value="mushroom_soup">Грибной суп-пюре</option>
+                            <option value="norwegian_soup">Норвежский суп</option>
+                        </select>
+
+                        <label class="input-form-label" for="main-meal">Главное блюдо</label>
+                        <select id="main-meal" class="input-form-item" name="main-meal" required>
+                            <option value="" selected disabled>Выберите главное блюдо</option>
+                            <option value="friedpotatoeswithmushrooms">Жареная картошка с грибами</option>
+                            <option value="lasagna">Лазанья</option>
+                            <option value="chickencutletsandmashedpotatoes">Котлеты из курицы с картофельным пюре</option>
+                        </select>
+
+                        <label class="input-form-label" for="drink">Напиток</label>
+                        <select id="drink" class="input-form-item" name="drink" required>
+                            <option value="" selected disabled>Выберите напиток</option>
+                            <option value="orangejuice">Апельсиновый сок</option>
+                            <option value="applejuice">Яблочный сок</option>
+                            <option value="carrotjuice">Морковный сок</option>
+                        </select>
+
+                        <label class="input-form-label" for="comment">Комментарий к заказу</label>
+                        <textarea id="comment" class="input-form-item" name="comment"></textarea>
+                    </div>
+
+                    <div class="input-form section-content-wrapper">
+                        <h3 class="input-form-header">Ваши данные</h3>
+
+                        <label class="input-form-label" for="name">Имя</label>
+                        <input id="name" class="input-form-item" name="name" required>
+
+                        <label class="input-form-label" for="email">Email</label>
+                        <input id="email" class="input-form-item" type="email" name="email" required>
+
+                        <input id="spam-letters" type="checkbox" name="spam-letters" checked>
+                        <label for="spam-letters">Получать информацию о скидках и акциях</label>
+
+                        <label class="input-form-label" for="phone">Номер телефона</label>
+                        <input id="phone" class="input-form-item" type="tel" name="phone" required>
+
+                        <label class="input-form-label" for="address">Адрес доставки</label>
+                        <input id="address" class="input-form-item" name="address" required>
+                        <p><i>Доставка осуществляется только по Москве</i></p>
+
+                        <fieldset id="choose-time">
+                            <legend class="input-form-label choose-time-label">Время доставки:</legend>
+
+                            <input class="choose-time-option" type="radio" id="rapid-delivery-option" name="delivery-option" value="rapid" required>
+                            <label class="choose-time-option" for="rapid-delivery-option">Как можно скорее</label><br>
+                            <input class="choose-time-option" type="radio" id="bytime-delivery-option" name="delivery-option" value="bytime">
+                            <label class="choose-time-option" for="bytime-delivery-option">К указанному времени</label><br>
+                        </fieldset>
+
+                        <label class="input-form-label" for="delivery-time">Укажите время доставки</label>
+                        <input type="time" id="delivery-time" class="input-form-item" name="delivery-time" min="07:00" max="23:00" step="300">
+                        <p><i>Доступное время доставки с 7:00 до 23:00</i></p>
+
+                        <button type="reset" class="input-form-button" form="order">Сбросить</button>
+                        <button type="submit" class="input-form-button" form="order">Отправить</button>
+                    </div>
+                </form>
+            </section>
         </main>
 
 

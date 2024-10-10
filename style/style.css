@@ -72,6 +72,11 @@ body {
 	font-weight: 600;
 	color: #000000;
 }
+.form-header {
+	font-size: 40px;
+	text-align: center;
+}
+
 .section-img {
 	width: 70vw;
 	height: auto;
