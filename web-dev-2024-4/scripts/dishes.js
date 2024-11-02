@@ -1,4 +1,4 @@
-let dishes = [
+export let dishes = [
     {
         keyword: 'gaspacho',
         name: 'Гаспачо',
@@ -59,7 +59,7 @@ let dishes = [
         keyword: 'apple_juice',
         name: 'Яблочный сок',
         price: 90,
-        category: 'main_course',
+        category: 'beverages',
         count: '300 мл',
         image: 'beverages/apple_juice.jpg'
     },
@@ -67,7 +67,7 @@ let dishes = [
         keyword: 'carrot_juice',
         name: 'Морковный сок',
         price: 110,
-        category: 'beverage',
+        category: 'beverages',
         count: '300 мл',
         image: 'beverages/carrot_juice.jpg'
     }
