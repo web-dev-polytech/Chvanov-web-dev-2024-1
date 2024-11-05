@@ -214,7 +214,6 @@ function remove_from_order(card, category, category_order_wrapper) {
     form_category_text.textContent = `${category_translated_cap} не ${connected_with_gender_word_chosen(category_translated_cap)}`;
 }
 
-// !!!!!!!!!!!!
 function work_with_card(event) {
     const card = event.target.parentElement;
     const category = card.parentElement.parentElement.id.replace('-dish-section', '');
@@ -264,12 +263,10 @@ function work_with_card(event) {
     
 }
 
-// !!!!!!!!!!!!!!!!!!!!!!!!
-function validate_form(event) {
-    console.log(categories_for_send.length);
-    if (categories_for_send.length === 0) {
+function validate_dishes(event) {
+    if (!(total)) {
         event.preventDefault();
-        alert('Выберите блюда');
+        alert('Выберите блюда, которые хотите заказать');
     }
 }
 
@@ -277,10 +274,9 @@ function run_order_functionality() {
     const main = document.querySelector('main');
     // Enable cards actions
     const order_form_part = document.getElementById('order-form-part');
-    const submit_button = document.querySelector('.input-form-button[type="submit"]');
+    const order_form = document.querySelector('form#order');
     
-    // !!!!!!!!!!!
-    submit_button.addEventListener('click', validate_form);
+    order_form.addEventListener('submit', validate_dishes);
     
     construct_order_output(order_form_part);
     main.addEventListener('click', (event) => {
