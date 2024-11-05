@@ -25,19 +25,19 @@
 
 
         <main class="padding-wrapper">
-            <section id="soup-dish-section">
+            <section id="soup-dish-section" class="dish-section">
                 <h2 class="section-header">Выберите суп</h2>
                 <div class="dish-block section-content-wrapper">
                 </div>
             </section>
 
-            <section id="main_course-dish-section">
+            <section id="main_course-dish-section" class="dish-section">
                 <h2 class="section-header">Выберите главное блюдо</h2>
                 <div class="dish-block section-content-wrapper">
                 </div>
             </section>
 
-            <section id="beverages-dish-section">
+            <section id="beverages-dish-section" class="dish-section">
                 <h2 class="section-header">Выберите напиток</h2>
                 <div class="dish-block section-content-wrapper">
                 </div>
@@ -46,33 +46,7 @@
             <section>
                 <h2 class="form-header">Сделать заказ</h2>
                 <form id="order" class="input-section" method="post" action="https://httpbin.org/post">
-                    <div class="input-form section-content-wrapper">
-                        <h3 class="input-form-header">Ваш заказ</h3>
-
-                        <label class="input-form-label" for="soup">Суп</label>
-                        <select id="soup" class="input-form-item" name="soup" form="order" required>
-                            <option value="" selected disabled>Выберите суп</option>
-                            <option value="gaspatcho">Гаспачо</option>
-                            <option value="mushroom_soup">Грибной суп-пюре</option>
-                            <option value="norwegian_soup">Норвежский суп</option>
-                        </select>
-
-                        <label class="input-form-label" for="main-meal">Главное блюдо</label>
-                        <select id="main-meal" class="input-form-item" name="main-meal" required>
-                            <option value="" selected disabled>Выберите главное блюдо</option>
-                            <option value="friedpotatoeswithmushrooms">Жареная картошка с грибами</option>
-                            <option value="lasagna">Лазанья</option>
-                            <option value="chickencutletsandmashedpotatoes">Котлеты из курицы с картофельным пюре</option>
-                        </select>
-
-                        <label class="input-form-label" for="drink">Напиток</label>
-                        <select id="drink" class="input-form-item" name="drink" required>
-                            <option value="" selected disabled>Выберите напиток</option>
-                            <option value="orangejuice">Апельсиновый сок</option>
-                            <option value="applejuice">Яблочный сок</option>
-                            <option value="carrotjuice">Морковный сок</option>
-                        </select>
-
+                    <div id="order-form-part" class="input-form section-content-wrapper">
                         <label class="input-form-label" for="comment">Комментарий к заказу</label>
                         <textarea id="comment" class="input-form-item" name="comment"></textarea>
                     </div>

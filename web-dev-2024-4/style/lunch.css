@@ -24,13 +24,17 @@ section > div {
 }
 .dish-card:hover {
 	border: solid 2px tomato;
-	padding: 30px 40px;
-	background-color: #ffffff;
-	
 
 	.add-to-card-button {
 		background-color: #d6d0c5;
 	}
+}
+.chosen {
+	border: solid 2px #e14610;
+}
+.empty-order-p-style {
+	font-weight: 600;
+	font-size: 24px;
 }
 .add-to-card-description {
 	font-weight: 600;

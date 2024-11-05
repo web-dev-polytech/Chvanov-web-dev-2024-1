@@ -123,6 +123,10 @@ th, td {
 	text-decoration: none;
 }
 
+.hide-element {
+	display: none;
+}
+
 
 @media all and (max-width: 800px) {
 	.nav-bar-list {
