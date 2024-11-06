@@ -29,7 +29,7 @@ export let dishes = [
         price: 150,
         category: 'main_course',
         count: '250 г',
-        image: 'main_course/fried_potatoes_with_mushrooms.jpg'
+        image: 'main_course/friedpotatoeswithmushrooms1.jpg'
     },
     {
         keyword: 'lasagna',
@@ -45,7 +45,7 @@ export let dishes = [
         price: 225,
         category: 'main_course',
         count: '280 г',
-        image: 'main_course/chicken_cutlets_with_mashed_potatoes.jpg'
+        image: 'main_course/chickencutletsandmashedpotatoes.jpg'
     },
     {
         keyword: 'orange_juice',
@@ -53,7 +53,7 @@ export let dishes = [
         price: 120,
         category: 'beverages',
         count: '300 мл',
-        image: 'beverages/orange_juice.jpg'
+        image: 'beverages/orangejuice.jpg'
     },
     {
         keyword: 'apple_juice',
@@ -61,7 +61,7 @@ export let dishes = [
         price: 90,
         category: 'beverages',
         count: '300 мл',
-        image: 'beverages/apple_juice.jpg'
+        image: 'beverages/applejuice.jpg'
     },
     {
         keyword: 'carrot_juice',
@@ -69,6 +69,6 @@ export let dishes = [
         price: 110,
         category: 'beverages',
         count: '300 мл',
-        image: 'beverages/carrot_juice.jpg'
+        image: 'beverages/carrotjuice.jpg'
     }
 ];
