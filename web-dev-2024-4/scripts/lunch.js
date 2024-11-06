@@ -8,7 +8,6 @@ const category_names_dictionary = {
     'beverages': 'напиток'
 };
 
-let categories_for_send = {};
 let total = 0;
 
 function construct_card(dish) {
