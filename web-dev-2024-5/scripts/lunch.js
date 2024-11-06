@@ -1,12 +1,5 @@
 'use strict'; 
-import { dishes } from './dishes.js'
-
-
-const category_names_dictionary = {
-    'soup': 'суп',
-    'main_course': 'главное блюдо',
-    'beverages': 'напиток'
-};
+import { dishes, category_names_dictionary, category_order } from './dishes.js';
 
 let total = 0;
 
@@ -81,6 +74,7 @@ function construct_cards_block() {
 function construct_section(category) {
     const dish_section = document.createElement('section');
     dish_section.id = `${category}-dish-section`;
+    dish_section.classList.add('dish-section');
 
     // Construct section header
     const dish_section_header = construct_section_header(category);
@@ -94,6 +88,7 @@ function construct_section(category) {
 }
 
 function construct_dishes_sections(dishes, parent_element) {
+    let temp_sections_container = {};
     for (const dish of dishes) {
         let category_section_id = `${dish.category}-dish-section`;
         let category_section = document.getElementById(category_section_id);
@@ -114,7 +109,19 @@ function construct_dishes_sections(dishes, parent_element) {
         }
         let dish_block = category_section.querySelector('div.dish-block');
         dish_block.appendChild(construct_card(dish));
+        temp_sections_container[dish.category] = category_section;
     }
+    category_order.reverse().forEach((section_category) => {
+        parent_element.prepend(temp_sections_container[section_category]);
+        delete temp_sections_container[section_category];
+    });
+    for (let section_category in temp_sections_container) {
+        parent_element.append(temp_sections_container[section_category]);
+        delete temp_sections_container[section_category];
+    }
+    // move form-block to the end of parent_element
+    const order_form_section = document.querySelector('section#order-form');
+    parent_element.append(order_form_section);
 }
 
 function fetch_dishes() {
