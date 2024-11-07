@@ -1,13 +1,29 @@
 'use strict'; 
-import { dishes, category_names_dictionary, category_order } from './dishes.js';
+import { dishes, category_names_dictionary, kinds_dictionary, category_order } from './dishes.js';
 
 let total = 0;
+
+function translate_category(category) {
+    if (!(category in category_names_dictionary)) return 'блюдо';
+    return category_names_dictionary[category];
+}
+
+function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function connected_with_gender_word_chosen(word_to_match) {
+    if (word_to_match.endsWith('о')) return 'выбрано';
+    return 'выбран';
+}
+
 
 function construct_card(dish) {
     // Card itself
     const card = document.createElement('div');
     card.className = 'dish-card';
     card.setAttribute('data-dish', dish.keyword);
+    card.setAttribute('data-kind', dish.kind);
 
     const cardContent = [];
     // Dish image
@@ -43,18 +59,14 @@ function construct_card(dish) {
     return card;
 }
 
-function translate_category(category) {
-    if (!(category in category_names_dictionary)) return 'блюдо';
-    return category_names_dictionary[category];
-}
+function construct_filtering_option(kind) {
+    const filtering_option = document.createElement('button');
+    filtering_option.classList.add('section-filter-option');
+    filtering_option.textContent = kinds_dictionary[kind];
 
-function capitalizeFirstLetter(string) {
-    if (!string) return '';
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-function connected_with_gender_word_chosen(word_to_match) {
-    if (word_to_match.endsWith('о')) return 'выбрано';
-    return 'выбран';
+    filtering_option.setAttribute('data-kind', kind);
+
+    return filtering_option;
 }
 
 function construct_section_header(category) {
@@ -62,6 +74,13 @@ function construct_section_header(category) {
     dish_section_header.className = 'section-header';
     dish_section_header.textContent = `Выберите ${translate_category(category)}`;
     return dish_section_header;
+}
+
+function construct_section_filter() {
+    const filter = document.createElement('div');
+    filter.classList.add('section-filter');
+    
+    return filter;
 }
 
 function construct_cards_block() {
@@ -79,6 +98,10 @@ function construct_section(category) {
     // Construct section header
     const dish_section_header = construct_section_header(category);
     dish_section.appendChild(dish_section_header);
+    
+    // Construct section filter
+    const dish_section_filter = construct_section_filter();
+    dish_section.appendChild(dish_section_filter);
 
     // Construct empty block to insert dishes
     const dish_cards_block = construct_cards_block();
@@ -91,6 +114,7 @@ function construct_dishes_sections(dishes, parent_element) {
     let temp_sections_container = {};
     for (const dish of dishes) {
         let category_section_id = `${dish.category}-dish-section`;
+        let category_kind = dish.kind;
         let category_section = document.getElementById(category_section_id);
 
         if (category_section === null) {
@@ -99,15 +123,26 @@ function construct_dishes_sections(dishes, parent_element) {
         } 
         else {
             let dish_section_header = category_section.querySelector('h2.section-header');
-            if (dish_section_header === null) {
-                category_section.prepend(construct_section_header(dish.category))
-            }
+            let dish_section_filter = category_section.querySelector('div.section-filter');
             let dish_block = category_section.querySelector('div.dish-block');
+            if (dish_section_header === null) {
+                category_section.append(construct_section_header(dish.category))
+            }
+            if (dish_section_filter === null) {
+                category_section.append(construct_section_filter());
+            }
             if (dish_block === null) {
-                category_section.append(construct_cards_block())
+                category_section.append(construct_cards_block());
             }
         }
-        let dish_block = category_section.querySelector('div.dish-block');
+        const dish_block = category_section.querySelector('div.dish-block');
+        const section_filter = category_section.querySelector('div.section-filter');
+        
+        const existing_filtering_option = section_filter.querySelector(`button[data-kind="${category_kind}"]`);
+        if (!(existing_filtering_option)) {
+            section_filter.append(construct_filtering_option(category_kind));
+        }
+
         dish_block.appendChild(construct_card(dish));
         temp_sections_container[dish.category] = category_section;
     }
@@ -266,7 +301,50 @@ function work_with_card(event) {
         order_wrapper.classList.remove('hide-element');
         empty_order_p_style.classList.add('hide-element');
     }
-    
+}
+
+function unfilter_all(category_section) {
+    for (const card of category_section.children) {
+        if (card.classList.contains('filter-card')) {
+            card.classList.remove('filter-card');
+        }
+    }
+}
+
+function filter_cards_by_kind(category_section, kind) {
+    for (const card of category_section.children) {
+        if (card.dataset.kind === kind) {
+            card.classList.remove('filter-card');
+        } else {
+            card.classList.add('filter-card');
+        }
+    }
+}
+
+function filter_dishes(event) {
+    const filter_option = event.target;
+    const active_filter_option = filter_option.parentElement.querySelector('button.filter-option-chosen');
+    const category_section = filter_option.parentElement.parentElement.querySelector('div.dish-block');
+
+    const category = filter_option.parentElement.parentElement.id.replace('-dish-section', '');
+    const kind = filter_option.dataset.kind;
+
+    filter_option.classList.add('filter-option-chosen');
+
+    // if active_filter_option exists switch it to inactive
+    if (active_filter_option) {
+        active_filter_option.classList.toggle('filter-option-chosen');
+
+        // Show all cards in category
+        if (active_filter_option == filter_option) {
+            // show all cards
+            unfilter_all(category_section, kind);
+            // remove_from_order(card, category, category_order_wrapper)
+            return;
+        }
+    }
+    filter_cards_by_kind(category_section, kind);
+    // const all_section_filters = document.querySelectorAll('div.section-filter');
 }
 
 function validate_dishes(event) {
@@ -276,7 +354,7 @@ function validate_dishes(event) {
     }
 }
 
-function run_order_functionality() {
+function run_card_functionality() {
     const main = document.querySelector('main');
     // Enable cards actions
     const order_form_part = document.getElementById('order-form-part');
@@ -291,7 +369,20 @@ function run_order_functionality() {
         }
     });
 }
+function run_filter_functionality() {
+    const main = document.querySelector('main');
+    main.addEventListener('click', (event) => {
+        if (event.target.classList.contains('section-filter-option')) {
+            filter_dishes(event);
+        }
+    });
+}
+
+function run_shopping() {
+    run_filter_functionality();
+    run_card_functionality();
+}
 
 
 fetch_dishes();
-run_order_functionality();
+run_shopping();

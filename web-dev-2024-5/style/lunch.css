@@ -7,9 +7,11 @@ section > div {
 	padding: 20px 0;
 }
 
+
 .dish-card {
 	padding: 30px 40px;
 	border-radius: 35px;
+	display: none;
 	cursor: pointer;
 	filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
 	background-color: #ffffff;
@@ -31,6 +33,36 @@ section > div {
 }
 .chosen {
 	border: solid 2px #e14610;
+}
+.section-filter {
+	display: flex;
+	margin-top: 40px;
+	justify-content: start;
+	gap: 10px;
+}
+.section-filter-option {
+	font-size: 20px;
+	color: rgb(0, 146, 29);
+	background-color: #ffffff00;
+	padding: 10px 14px;
+	
+	border-radius: 14px;
+	border: none;
+
+	cursor: pointer;
+	transition: 0.3s;
+}
+.section-filter-option:hover {
+	background-color: #00ff3335;
+}
+.filter-option-chosen {
+	background-color: #00ff335d;
+}
+.filter-option-chosen:hover {
+	background-color: #00ff3381;
+}
+.filter-card {
+	display: none;
 }
 .empty-order-p-style {
 	font-weight: 600;

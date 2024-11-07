@@ -5,6 +5,16 @@ export const category_names_dictionary = {
     'beverages': 'напиток',
     'desserts': 'десерт'
 };
+export const kinds_dictionary = {
+    'veg': 'вегетарианское',
+    'meat': 'мясное',
+    'seafood': 'рыбное',
+    'cool': 'холодный',
+    'hot': 'горячий',
+    'small': 'маленькая порция',
+    'medium': 'средняя порция',
+    'large': 'большая порция'
+};
 export const category_order = [
     'soup',
     'main_course',
