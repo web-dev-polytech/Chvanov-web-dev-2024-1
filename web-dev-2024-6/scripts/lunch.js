@@ -163,6 +163,9 @@ function fetch_dishes() {
     const main = document.querySelector('main');
     dishes.sort((a, b) => a.name.localeCompare(b.name));
     construct_dishes_sections(dishes, main);
+    
+    const combo_samples = document.querySelector('div#combo-samples');
+    main.prepend(combo_samples);
 }
 
 
