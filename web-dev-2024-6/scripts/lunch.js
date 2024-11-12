@@ -1,5 +1,10 @@
 'use strict'; 
-import { dishes, category_names_dictionary, kinds_dictionary, category_order } from './dishes.js';
+import {
+    dishes,
+    category_names_dictionary,
+    kinds_dictionary,
+    category_order
+} from './dishes.js';
 
 let total = 0;
 
@@ -72,7 +77,8 @@ function construct_filtering_option(kind) {
 function construct_section_header(category) {
     const dish_section_header = document.createElement('h2');
     dish_section_header.className = 'section-header';
-    dish_section_header.textContent = `Выберите ${translate_category(category)}`;
+    const elem_text = `Выберите ${translate_category(category)}`;
+    dish_section_header.textContent = elem_text;
     return dish_section_header;
 }
 
@@ -87,7 +93,7 @@ function construct_cards_block() {
     const dish_cards_block = document.createElement('div');
     dish_cards_block.classList.add('dish-block', 'section-content-wrapper');
 
-    return dish_cards_block
+    return dish_cards_block;
 }
 
 function construct_section(category) {
@@ -120,13 +126,16 @@ function construct_dishes_sections(dishes, parent_element) {
         if (category_section === null) {
             parent_element.prepend(construct_section(dish.category));
             category_section = document.getElementById(category_section_id);
-        } 
-        else {
-            let dish_section_header = category_section.querySelector('h2.section-header');
-            let dish_section_filter = category_section.querySelector('div.section-filter');
+        } else {
+            let dish_section_header = 
+                category_section.querySelector('h2.section-header');
+            let dish_section_filter = 
+                category_section.querySelector('div.section-filter');
             let dish_block = category_section.querySelector('div.dish-block');
             if (dish_section_header === null) {
-                category_section.append(construct_section_header(dish.category))
+                category_section.append(
+                    construct_section_header(dish.category)
+                );
             }
             if (dish_section_filter === null) {
                 category_section.append(construct_section_filter());
@@ -136,9 +145,13 @@ function construct_dishes_sections(dishes, parent_element) {
             }
         }
         const dish_block = category_section.querySelector('div.dish-block');
-        const section_filter = category_section.querySelector('div.section-filter');
+        const section_filter = 
+            category_section.querySelector('div.section-filter');
         
-        const existing_filtering_option = section_filter.querySelector(`button[data-kind="${category_kind}"]`);
+        const existing_filtering_option = 
+            section_filter.querySelector(
+                `button[data-kind="${category_kind}"]`
+            );
         if (!(existing_filtering_option)) {
             section_filter.append(construct_filtering_option(category_kind));
         }
@@ -190,7 +203,8 @@ function construct_order_output(parent_element) {
         list_element_wrapper.style.listStyleType = 'None';
         list_element_wrapper.id = `${category}-category-order-wrapper`;
         
-        const category_translated_cap = capitalizeFirstLetter(translate_category(category));
+        const category_translated_cap = 
+            capitalizeFirstLetter(translate_category(category));
         // Create label
         const category_label = document.createElement('label');
         category_label.classList.add('input-form-label');
@@ -205,7 +219,10 @@ function construct_order_output(parent_element) {
         category_input.value = '';
         // Text
         const category_text = document.createElement('p');
-        category_text.textContent = `${category_translated_cap} не ${connected_with_gender_word_chosen(category_translated_cap)}`;
+        category_text.textContent = 
+            `${category_translated_cap} не ${connected_with_gender_word_chosen(
+                category_translated_cap
+            )}`;
 
         list_element_wrapper.appendChild(category_label);
         list_element_wrapper.appendChild(category_input);
@@ -245,7 +262,8 @@ function add_to_order(card, category, category_order_wrapper) {
 
     const form_category_text = category_order_wrapper.querySelector('p');
     const dish_name = card.querySelector('p.add-to-card-name').textContent;
-    const dish_price = card.querySelector('p.add-to-card-description').textContent;
+    const dish_price = 
+        card.querySelector('p.add-to-card-description').textContent;
     form_category_text.textContent = `${dish_name} ${dish_price}`;
 }
 
@@ -253,18 +271,27 @@ function remove_from_order(card, category, category_order_wrapper) {
     const form_category_input = category_order_wrapper.querySelector('input');
     form_category_input.value = '';
     
-    const category_translated_cap = capitalizeFirstLetter(translate_category(category));
+    const category_translated_cap = 
+        capitalizeFirstLetter(translate_category(category));
     const form_category_text = category_order_wrapper.querySelector('p');
-    form_category_text.textContent = `${category_translated_cap} не ${connected_with_gender_word_chosen(category_translated_cap)}`;
+    form_category_text.textContent = 
+        `${category_translated_cap} не ${connected_with_gender_word_chosen(
+            category_translated_cap
+        )}`;
 }
 
 function work_with_card(event) {
     const card = event.target.parentElement;
-    const category = card.parentElement.parentElement.id.replace('-dish-section', '');
-    const card_dish_price = Number(card.querySelector('p.add-to-card-description').textContent.replace('₽', ''));
+    const category = 
+        card.parentElement.parentElement.id.replace('-dish-section', '');
+    const card_dish_price = 
+        Number(card.querySelector(
+            'p.add-to-card-description'
+        ).textContent.replace('₽', ''));
     
     const active_card = card.parentElement.querySelector('div.chosen');
-    const category_order_wrapper = document.getElementById(`${category}-category-order-wrapper`);
+    const category_order_wrapper = 
+        document.getElementById(`${category}-category-order-wrapper`);
 
     const order_wrapper = document.querySelector('ul#card-list');
     const empty_order_p_style = document.querySelector('p.empty-order-p-style');
@@ -277,13 +304,16 @@ function work_with_card(event) {
         active_card.querySelector('button').textContent = 'Добавить';
         active_card.classList.toggle('chosen');
 
-        const active_card_dish_price = Number(active_card.querySelector('p.add-to-card-description').textContent.replace('₽', ''));
+        const active_card_dish_price = 
+            Number(active_card.querySelector(
+                'p.add-to-card-description'
+            ).textContent.replace('₽', ''));
         total -= active_card_dish_price;
         // Total recalculation
         order_total_text.textContent = `${total}₽`;
         // Exclude dish from order
         if (active_card == card) {
-            remove_from_order(card, category, category_order_wrapper)
+            remove_from_order(card, category, category_order_wrapper);
             if (!(total)) {
                 order_wrapper.classList.add('hide-element');
                 empty_order_p_style.classList.remove('hide-element');
@@ -326,10 +356,19 @@ function filter_cards_by_kind(category_section, kind) {
 
 function filter_dishes(event) {
     const filter_option = event.target;
-    const active_filter_option = filter_option.parentElement.querySelector('button.filter-option-chosen');
-    const category_section = filter_option.parentElement.parentElement.querySelector('div.dish-block');
+    const active_filter_option = 
+        filter_option.parentElement.querySelector(
+            'button.filter-option-chosen'
+        );
+    const category_section = 
+        filter_option.parentElement.parentElement.querySelector(
+            'div.dish-block'
+        );
 
-    const category = filter_option.parentElement.parentElement.id.replace('-dish-section', '');
+    const category = 
+        filter_option.parentElement.parentElement.id.replace(
+            '-dish-section', ''
+        );
     const kind = filter_option.dataset.kind;
 
     filter_option.classList.add('filter-option-chosen');
@@ -347,7 +386,8 @@ function filter_dishes(event) {
         }
     }
     filter_cards_by_kind(category_section, kind);
-    // const all_section_filters = document.querySelectorAll('div.section-filter');
+    // const all_section_filters = 
+    //     document.querySelectorAll('div.section-filter');
 }
 
 function validate_dishes(event) {
