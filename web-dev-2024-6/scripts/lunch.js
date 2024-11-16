@@ -7,6 +7,7 @@ import {
 } from './dishes.js';
 
 let total = 0;
+let orderCategories = {};
 
 function translate_category(category) {
     if (!(category in category_names_dictionary)) return 'блюдо';
@@ -257,6 +258,8 @@ function construct_order_output(parent_element) {
 }
 
 function add_to_order(card, category, category_order_wrapper) {
+    orderCategories[category] = category;
+    
     const form_category_input = category_order_wrapper.querySelector('input');
     form_category_input.value = card.dataset.dish;
 
@@ -268,6 +271,8 @@ function add_to_order(card, category, category_order_wrapper) {
 }
 
 function remove_from_order(card, category, category_order_wrapper) {
+    delete orderCategories[category];
+
     const form_category_input = category_order_wrapper.querySelector('input');
     form_category_input.value = '';
     
@@ -390,10 +395,111 @@ function filter_dishes(event) {
     //     document.querySelectorAll('div.section-filter');
 }
 
+
+function createBanner(text) {
+    // Create the section element
+    const section = document.createElement('section');
+    section.className = 'combo-checker';
+    
+    // Create the banner div
+    const banner = document.createElement('div');
+    banner.className = 'combo-checker-banner';
+    banner.id = 'combo-checker';
+    
+    // Create the paragraph element for the text
+    const paragraph = document.createElement('p');
+    paragraph.className = 'combo-checker-banner-text';
+    paragraph.textContent = text;
+    
+    // Create the button element
+    const button = document.createElement('button');
+    button.className = 'combo-checker-banner-button';
+    button.id = 'combo-checker-banner-button';
+    button.textContent = 'Окей 👌🏼';
+    button.addEventListener('click', () => {
+        section.remove();
+    });
+    
+    // Append the paragraph and button to the banner
+    banner.appendChild(paragraph);
+    banner.appendChild(button);
+    
+    // Append the banner to the section
+    section.appendChild(banner);
+    
+    // Append the section to the body or a specific parent element
+    document.querySelector('div.wrapper').appendChild(section);
+}
+function hasAllKeys(keys, obj) {
+    return keys.every(key => key in obj);
+}
+
+function dictEqual(obj1, obj2) {
+    if (obj1 === obj2) return true;
+    if (typeof obj1 !== 'object' 
+        || obj1 === null 
+        || typeof obj2 !== 'object' 
+        || obj2 === null
+    ) return false;
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) return false;
+    for (const key of keys1) {
+        if (!keys2.includes(key) || !dictEqual(obj1[key], obj2[key])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function validate_dishes(event) {
-    if (!(total)) {
+    const length = Object.keys(orderCategories).length;
+    let correct = true;
+    let bannerText = '';
+
+    let test1 = {'hello': 'world'};
+    let test2 = {'hello': 'world'};
+    let test3 = {'hello': 'world', 'test': 'fake'};
+
+    console.log(`equal -> ${dictEqual(test1, test2)}`);
+    console.log(`not equal –> ${dictEqual(test1, test3)}`);
+
+    if (
+        length === 0
+    ) {
+        correct = false;
+        bannerText = 'Ничего не выбрано. Выберите блюда для заказа';
+    } else if (
+        'beverages' in orderCategories
+        || 'desserts' in orderCategories
+    ) {
+        correct = false;
+        bannerText = 'Выберите главное блюдо';
+    } else if (
+        'soup' in orderCategories
+        && !('main_course' in orderCategories 
+            || 'salads_starters' in orderCategories)
+    ) {
+        correct = false;
+        bannerText = 'Выберите главное блюдо или салат/стартер';
+    } else if (
+        'salads_starters' in orderCategories
+        && !('soup' in orderCategories 
+            || 'main_course' in orderCategories)
+    ) {
+        correct = false;
+        bannerText = 'Выберите суп или главное блюдо';
+    } else if (
+        !('beverages' in orderCategories) // !!!!!!!!!!!!!!!!!!1
+    ) {
+        correct = false;
+        bannerText = 'Выберите напиток';
+    }
+
+    if (!(correct)) {
         event.preventDefault();
-        alert('Выберите блюда, которые хотите заказать');
+        createBanner(bannerText);
     }
 }
 
@@ -401,9 +507,10 @@ function run_card_functionality() {
     const main = document.querySelector('main');
     // Enable cards actions
     const order_form_part = document.getElementById('order-form-part');
-    const order_form = document.querySelector('form#order');
+    const order_form_button = 
+        document.querySelector('button.input-form-button[type="submit"]');
     
-    order_form.addEventListener('submit', validate_dishes);
+    order_form_button.addEventListener('click', validate_dishes);
     
     construct_order_output(order_form_part);
     main.addEventListener('click', (event) => {
