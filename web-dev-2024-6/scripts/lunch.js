@@ -470,9 +470,41 @@ function validate_dishes(event) {
     ) {
         correct = false;
         bannerText = 'Ничего не выбрано. Выберите блюда для заказа';
+    } else if ((
+        (
+            'soup' in orderCategories
+            && 'main_course' in orderCategories
+            && 'salads_starters' in orderCategories
+        )
+        || (
+            'soup' in orderCategories
+            && 'main_course' in orderCategories
+            && !('salads_starters' in orderCategories)
+        )
+        || (
+            'soup' in orderCategories
+            && !('main_course' in orderCategories)
+            && 'salads_starters' in orderCategories
+        )
+        || (
+            !('soup' in orderCategories)
+            && 'main_course' in orderCategories
+            && 'salads_starters' in orderCategories
+        )
+        || (
+            !('soup' in orderCategories)
+            && 'main_course' in orderCategories
+            && !('salads_starters' in orderCategories)
+        ))
+        && !('beverages' in orderCategories)
+    ) {
+        correct = false;
+        bannerText = 'Выберите напиток';
     } else if (
-        'beverages' in orderCategories
-        || 'desserts' in orderCategories
+        ('beverages' in orderCategories
+        || 'desserts' in orderCategories)
+        && !('main_course' in orderCategories 
+            || 'soup' in orderCategories)
     ) {
         correct = false;
         bannerText = 'Выберите главное блюдо';
@@ -490,11 +522,6 @@ function validate_dishes(event) {
     ) {
         correct = false;
         bannerText = 'Выберите суп или главное блюдо';
-    } else if (
-        !('beverages' in orderCategories) // !!!!!!!!!!!!!!!!!!1
-    ) {
-        correct = false;
-        bannerText = 'Выберите напиток';
     }
 
     if (!(correct)) {
