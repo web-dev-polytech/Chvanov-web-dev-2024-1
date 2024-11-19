@@ -1,10 +1,9 @@
 'use strict'; 
 import {
-    dishes,
     category_names_dictionary,
     kinds_dictionary,
     category_order
-} from './dishes.js';
+} from './supplementary.js';
 
 let total = 0;
 let orderCategories = {};
@@ -34,7 +33,7 @@ function construct_card(dish) {
     const cardContent = [];
     // Dish image
     const cardImg = document.createElement('img');
-    cardImg.src = `img/${dish.image}`;
+    cardImg.src = dish.image;
     cardImg.alt = dish.name;
     cardContent.push(cardImg);
     // Dish price
@@ -171,15 +170,6 @@ function construct_dishes_sections(dishes, parent_element) {
     // move form-block to the end of parent_element
     const order_form_section = document.querySelector('section#order-form');
     parent_element.append(order_form_section);
-}
-
-function fetch_dishes() {
-    const main = document.querySelector('main');
-    dishes.sort((a, b) => a.name.localeCompare(b.name));
-    construct_dishes_sections(dishes, main);
-    
-    const combo_samples = document.querySelector('div#combo-samples');
-    main.prepend(combo_samples);
 }
 
 
@@ -391,8 +381,6 @@ function filter_dishes(event) {
         }
     }
     filter_cards_by_kind(category_section, kind);
-    // const all_section_filters = 
-    //     document.querySelectorAll('div.section-filter');
 }
 
 
@@ -430,40 +418,17 @@ function createBanner(text) {
     // Append the section to the body or a specific parent element
     document.querySelector('div.wrapper').appendChild(section);
 }
-function hasAllKeys(keys, obj) {
-    return keys.every(key => key in obj);
-}
-
-function dictEqual(obj1, obj2) {
-    if (obj1 === obj2) return true;
-    if (typeof obj1 !== 'object' 
-        || obj1 === null 
-        || typeof obj2 !== 'object' 
-        || obj2 === null
-    ) return false;
-
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-    if (keys1.length !== keys2.length) return false;
-    for (const key of keys1) {
-        if (!keys2.includes(key) || !dictEqual(obj1[key], obj2[key])) {
-            return false;
-        }
-    }
-    return true;
-}
 
 function validate_dishes(event) {
     const length = Object.keys(orderCategories).length;
     let correct = true;
     let bannerText = '';
 
-    let test1 = {'hello': 'world'};
-    let test2 = {'hello': 'world'};
-    let test3 = {'hello': 'world', 'test': 'fake'};
-
-    console.log(`equal -> ${dictEqual(test1, test2)}`);
-    console.log(`not equal –> ${dictEqual(test1, test3)}`);
+    let soup_key = category_order[4];
+    let main_course_key = category_order[3];
+    let salad_key = category_order[2];
+    let drink_key = category_order[1];
+    let dessert_key = category_order[0];
 
     if (
         length === 0
@@ -472,53 +437,53 @@ function validate_dishes(event) {
         bannerText = 'Ничего не выбрано. Выберите блюда для заказа';
     } else if ((
         (
-            'soup' in orderCategories
-            && 'main_course' in orderCategories
-            && 'salads_starters' in orderCategories
+            soup_key in orderCategories
+            && main_course_key in orderCategories
+            && salad_key in orderCategories
         )
         || (
-            'soup' in orderCategories
-            && 'main_course' in orderCategories
-            && !('salads_starters' in orderCategories)
+            soup_key in orderCategories
+            && main_course_key in orderCategories
+            && !(salad_key in orderCategories)
         )
         || (
-            'soup' in orderCategories
-            && !('main_course' in orderCategories)
-            && 'salads_starters' in orderCategories
+            soup_key in orderCategories
+            && !(main_course_key in orderCategories)
+            && salad_key in orderCategories
         )
         || (
-            !('soup' in orderCategories)
-            && 'main_course' in orderCategories
-            && 'salads_starters' in orderCategories
+            !(soup_key in orderCategories)
+            && main_course_key in orderCategories
+            && salad_key in orderCategories
         )
         || (
-            !('soup' in orderCategories)
-            && 'main_course' in orderCategories
-            && !('salads_starters' in orderCategories)
+            !(soup_key in orderCategories)
+            && main_course_key in orderCategories
+            && !(salad_key in orderCategories)
         ))
-        && !('beverages' in orderCategories)
+        && !(drink_key in orderCategories)
     ) {
         correct = false;
         bannerText = 'Выберите напиток';
     } else if (
-        ('beverages' in orderCategories
-        || 'desserts' in orderCategories)
-        && !('main_course' in orderCategories 
-            || 'soup' in orderCategories)
+        (drink_key in orderCategories
+        || dessert_key in orderCategories)
+        && !(main_course_key in orderCategories 
+            || soup_key in orderCategories)
     ) {
         correct = false;
         bannerText = 'Выберите главное блюдо';
     } else if (
-        'soup' in orderCategories
-        && !('main_course' in orderCategories 
-            || 'salads_starters' in orderCategories)
+        soup_key in orderCategories
+        && !(main_course_key in orderCategories 
+            || salad_key in orderCategories)
     ) {
         correct = false;
         bannerText = 'Выберите главное блюдо или салат/стартер';
     } else if (
-        'salads_starters' in orderCategories
-        && !('soup' in orderCategories 
-            || 'main_course' in orderCategories)
+        salad_key in orderCategories
+        && !(soup_key in orderCategories 
+            || main_course_key in orderCategories)
     ) {
         correct = false;
         bannerText = 'Выберите суп или главное блюдо';
@@ -560,6 +525,27 @@ function run_shopping() {
     run_card_functionality();
 }
 
+function fetchDishes() {
+    const main = document.querySelector('main');
+    let api = new URL('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
 
-fetch_dishes();
-run_shopping();
+    // Fetch dishes and construct sections
+    fetch(api, {method: 'GET'})
+        .then(response => response.json())
+        .then(
+            dishes => {
+                dishes.sort((a, b) => a.name.localeCompare(b.name));
+                construct_dishes_sections(dishes, main);
+                const comboSamples = document.querySelector('#combo-samples');
+                main.prepend(comboSamples);
+
+                run_shopping();
+            }
+        );
+}
+
+function runLunchPageFunctionality() {
+    fetchDishes();
+}
+
+runLunchPageFunctionality();
