@@ -1,0 +1,288 @@
+section > div {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+}
+.section-content-wrapper {
+	padding: 20px 0;
+}
+
+
+.dish-card {
+	padding: 30px 40px;
+	border-radius: 35px;
+	display: none;
+	cursor: pointer;
+	filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+	background-color: #ffffff;
+
+	border: 2px solid transparent;
+	
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+
+	transition: 0.5s ease;
+}
+.dish-card:hover {
+	border: solid 2px tomato;
+
+	.add-to-card-button {
+		background-color: #d6d0c5;
+	}
+}
+.chosen {
+	border: solid 2px #e14610;
+}
+.section-filter {
+	display: flex;
+	margin-top: 40px;
+	justify-content: start;
+	gap: 10px;
+}
+.section-filter-option {
+	font-size: 20px;
+	color: rgb(0, 146, 29);
+	background-color: #ffffff00;
+	padding: 10px 14px;
+	
+	border-radius: 14px;
+	border: none;
+
+	cursor: pointer;
+	transition: 0.3s ease;
+}
+.section-filter-option:hover {
+	background-color: #00ff3335;
+}
+.filter-option-chosen {
+	background-color: #00ff335d;
+}
+.filter-option-chosen:hover {
+	background-color: #00ff3381;
+}
+.filter-card {
+	display: none;
+}
+
+.combo-checker {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	z-index: 1000;
+	background-color: rgba(189, 189, 189, 0.3);
+	backdrop-filter: blur(5px);
+
+	transition: 0.3s ease;
+}
+
+.combo-checker-banner {
+	width: 500px;
+	height: 230px;
+	
+	position: fixed;
+	z-index: 1000;
+	top: calc(50% - 80px);
+	left: calc(50% - 250px);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	
+	padding: 50px 60px;
+	background-color: #ffffff;
+	border: solid black;
+	border-radius: 12px;
+
+	box-shadow: 2px 2px 100px rgba(146, 146, 146, 0.55);
+}
+.combo-checker-banner-text {
+	margin-top: 15px;
+	text-align: center;
+}
+.combo-checker-banner-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+	padding: 5px 40px;
+    font-size: 20px;
+
+	border: solid black;
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+
+	transition: 0.3s ease;
+}
+.combo-checker-banner-button:hover {
+	background-color: black;
+	color: #ffffff;
+}
+
+.empty-order-p-style {
+	font-weight: 600;
+	font-size: 24px;
+}
+.add-to-card-description {
+	font-weight: 600;
+}
+.add-to-card-weight {
+	font-size: 20px;
+	font-weight: 400;
+	color: gray;
+	margin-top: 20px;
+}
+.add-to-card-name {
+	flex-grow: 1;
+}
+.add-to-card-button {
+	margin-top: 8px;
+	padding: 10px 30px;
+	border: none;
+	border-radius: 10px;
+
+	background-color: #f1eee9;
+	font-size: 20px;
+	cursor: pointer;
+	transition: 0.8s ease;
+}
+section > div > div > img {
+	width: 100%;
+	border-radius: 35px;
+	margin-bottom: 15px;
+}
+.dish p {
+	margin: 5px 0;
+}
+div#combo-samples {
+	margin-top: 50px;
+}
+.combo-samples-container {
+	margin-top: 50px;
+	margin-bottom: 70px;
+	
+	display: grid;
+	grid-auto-columns: auto;
+	grid-template-columns: repeat(3, 1fr);
+	column-gap: 50px;
+	row-gap: 20px;
+}
+.combo-samples-container-lunch {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 15px;
+}
+
+.combo-samples-container-lunch-item {
+	font-size: 20px;
+	font-weight: 450;
+	
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	justify-content: space-around;
+	align-items: center;
+
+	gap: 2px;
+}
+.combo-samples-container-lunch-item-icon {
+	width: 70px;
+	transition: transform 0.3s ease;
+}
+.combo-samples-container-lunch-item-icon:hover {
+	transform: scale(1.2) translateY(-10px);
+}
+
+.input-section {
+	display: flex;
+	justify-content: space-around;
+	align-items: start;
+	gap: 70px;
+}
+.input-form {
+	width: 35vw;
+}
+.input-form-header {
+	font-size: 31px;
+	font-weight: 500;
+
+	margin-bottom: 30px;
+}
+.input-form-label {
+	font-size: 25px;
+	
+	display: block;
+	margin-top: 20px;
+}
+.input-form-item {
+	font-size: 20px;
+
+	display: block;
+	width: 100%;
+	max-width: 400px;
+
+	padding: 9px;
+	margin-top: 7px;
+}
+textarea#comment {
+	min-height: 120px;
+	max-width: 400px;
+}
+
+input#email {
+	margin-bottom: 10px;
+}
+input#address, input#delivery-time {
+	margin-bottom: 5px;
+}
+fieldset {
+	border: None;
+}
+#choose-time {
+	margin-top: 25px;
+}
+.choose-time-label {
+	margin-bottom: 10px;
+}
+.choose-time-option {
+	margin: 10px 0;
+}
+
+.input-form-button {
+	font-size: 22px;
+	background-color: #ffffff;
+	border-width: 1px;
+	
+	margin-top: 28px;
+	padding: 10px 45px;
+
+	cursor: pointer;
+	transition: 0.3s ease;
+}
+.input-form-button:hover {
+	background-color: #e9e9e9;
+}
+
+@media all and (max-width: 800px) {
+	section > div {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.input-section {
+		flex-direction: column;
+		gap: 0px;
+	}
+	.input-form {
+		width: 100%;
+	}
+}
+
+
+@media all and (max-width: 600px) {
+	section > div {
+		grid-template-columns: 1fr;
+	}
+}
