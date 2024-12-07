@@ -1,11 +1,11 @@
-export const category_names_dictionary = {
+export const categoryNamesDictionary = {
     'soup': 'суп',
     'main-course': 'главное блюдо',
     'salad': 'салат или стартер',
     'drink': 'напиток',
     'dessert': 'десерт'
 };
-export const kinds_dictionary = {
+export const kindsDictionary = {
     'veg': 'вегетарианское',
     'meat': 'мясное',
     'fish': 'рыбное',
@@ -15,7 +15,7 @@ export const kinds_dictionary = {
     'medium': 'средняя порция',
     'large': 'большая порция'
 };
-export const category_order = [
+export const categoryOrder = [
     'soup',
     'main-course',
     'salad',

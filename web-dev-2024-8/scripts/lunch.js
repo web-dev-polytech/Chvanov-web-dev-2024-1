@@ -1,8 +1,8 @@
 'use strict'; 
 import {
-    category_names_dictionary,
-    kinds_dictionary,
-    category_order
+    categoryNamesDictionary,
+    kindsDictionary,
+    categoryOrder
 } from './supplementary.js';
 
 // Uncomment for debuging
@@ -12,8 +12,8 @@ let total = 0;
 
 
 function translate_category(category) {
-    if (!(category in category_names_dictionary)) return 'блюдо';
-    return category_names_dictionary[category];
+    if (!(category in categoryNamesDictionary)) return 'блюдо';
+    return categoryNamesDictionary[category];
 }
 
 function construct_card(dish) {
@@ -60,7 +60,7 @@ function construct_card(dish) {
 function construct_filtering_option(kind) {
     const filtering_option = document.createElement('button');
     filtering_option.classList.add('section-filter-option');
-    filtering_option.textContent = kinds_dictionary[kind];
+    filtering_option.textContent = kindsDictionary[kind];
 
     filtering_option.setAttribute('data-kind', kind);
 
@@ -108,16 +108,15 @@ function construct_section(category) {
 }
 
 function comboCorrect(orderDishes, orderDishesLength) {
-    const soup_key = category_order[4];
-    const main_course_key = category_order[3];
-    const salad_key = category_order[2];
-    const drink_key = category_order[1];
-    const dessert_key = category_order[0];
+    const soup_key = categoryOrder[4];
+    const main_course_key = categoryOrder[3];
+    const salad_key = categoryOrder[2];
+    const drink_key = categoryOrder[1];
+    const dessert_key = categoryOrder[0];
 
     if (
         orderDishesLength === 0
     ) {
-        console.log(1);
         return false;
     } else if ((
         (
@@ -147,29 +146,25 @@ function comboCorrect(orderDishes, orderDishesLength) {
         ))
         && !(drink_key in orderDishes)
     ) {
-        console.log(2);
         return false;
     } else if (
         (drink_key in orderDishes
         || dessert_key in orderDishes)
         && !(main_course_key in orderDishes 
             || soup_key in orderDishes)
-    ) {
-        console.log(3); 
+    ) { 
         return false;
     } else if (
         soup_key in orderDishes
         && !(main_course_key in orderDishes 
             || salad_key in orderDishes)
     ) {
-        console.log(4);
         return false;
     } else if (
         salad_key in orderDishes
         && !(soup_key in orderDishes 
             || main_course_key in orderDishes)
     ) {
-        console.log(5);
         return false;
     }
     return true;
@@ -213,7 +208,7 @@ function construct_dishes_sections(dishes, parent_element) {
         dish_block.appendChild(card);
         temp_sections_container[dish.category] = category_section;
     }
-    category_order.reverse().forEach((section_category) => {
+    categoryOrder.reverse().forEach((section_category) => {
         parent_element.prepend(temp_sections_container[section_category]);
         delete temp_sections_container[section_category];
     });
@@ -234,7 +229,7 @@ function construct_dishes_sections(dishes, parent_element) {
 
         const totalPriceTag = document.querySelector(".bottom-bar-total-price");
         totalPriceTag.textContent = total;
-        console.log(orderDishes);
+        
         if (comboCorrect(orderDishes, orderDishesLength)) {
             bottomBarButton.classList.remove('button-inactive');
         }
