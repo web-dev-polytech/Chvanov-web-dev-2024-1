@@ -1,6 +1,10 @@
-import {categoryNamesDictionary, categoryOrder} from './supplementary.js';
+import {
+    categoryNamesDictionary,
+    categoryOrder,
+    baseUrl, apiKey,
+    dishesURI, ordersURI
+} from './supplementary.js';
     
-let DEBUG = true;
 
 let total = 0;
 
@@ -110,7 +114,7 @@ function constructOrderOutput(parentElement) {
         categoryInput.id = `${category}-category-for-send`;
         categoryInput.name = `${category.replace('-', '_')}_id`;
         categoryInput.type = 'hidden';
-        categoryInput.value = '';
+        categoryInput.value = null;
         // Text
         const categoryText = document.createElement('p');
         categoryText.textContent = 
@@ -262,12 +266,54 @@ function validateDishes(event) {
         createBanner(bannerText);
     }
 }
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function checkSenitizeSend(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    let bannerText = '';
+
+    const form = event.target;
+    // const subscribeCheckbox = form.querySelector('input[name="subscribe"]');
+    // if (subscribeCheckbox && subscribeCheckbox.checked) {
+    //     subscribeCheckbox.value = true;
+    // }
+    // console.log(form);
+    const formData = new FormData(form);
+
+    // chack if the time (if required) exists
+    // if (
+    //     formData.get('delivery_type') === 'by_time' 
+    //     && !formData.get('delivery_time')
+    // ) {
+    //     bannerText = 'Укажите время доставки';
+    //     createBanner(bannerText);
+    //     return;
+    // }
+    // Send the form data to the server using fetch
+    const sendOrderUrl = new URL(
+        `${baseUrl}${ordersURI}?api_key=${apiKey}`
+    );
+    fetch(sendOrderUrl, {method: 'POST', body: formData})
+        .then(response => response.json())
+        .then(data => {
+            bannerText = data;
+            createBanner(bannerText);
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            bannerText = error;
+            createBanner(bannerText);
+            console.error('Error:', error);
+        });
+}
 async function createOrderPart() {
     const orderFormPart = document.getElementById('order-form-part');
     const orderFormButton = 
         document.querySelector('button.input-form-button[type="submit"]');
-    
+    const orderForm = document.querySelector('form#order');
+
     orderFormButton.addEventListener('click', validateDishes);
+    orderForm.addEventListener('submit', checkSenitizeSend);
     
     constructOrderOutput(orderFormPart);
 }
@@ -345,21 +391,13 @@ async function fetchOrderDishes() {
         cardList.classList.remove('hide-element');
     }
 
-    let baseUrl = undefined;
-    if (DEBUG) {
-        baseUrl = 'http://lab8-api.std-900.ist.mospolytech.ru/labs/api/dishes';
-    } else {
-        baseUrl = 'https://edu.std-900.ist.mospolytech.ru/labs/api/dishes';
-    }
-    let apiKey = 'ea3b214c-57f1-48a8-836f-6a2446e2c634';
-
     const orderDishesBlock
         = document.querySelector('div.dish-block.section-content-wrapper');
     const orderTotal = cardList.querySelector('p#order-total');
 
     for (let category in orderDishes) {
         let dishUrl = new URL(
-            `${baseUrl}/${orderDishes[category]}?api_key=${apiKey}`
+            `${baseUrl}${dishesURI}/${orderDishes[category]}?api_key=${apiKey}`
         );
         fetch(dishUrl, {method: 'GET'})
             .then(response => response.json())

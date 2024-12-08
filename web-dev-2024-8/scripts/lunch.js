@@ -2,7 +2,9 @@
 import {
     categoryNamesDictionary,
     kindsDictionary,
-    categoryOrder
+    categoryOrder,
+    baseUrl, apiKey,
+    dishesURI
 } from './supplementary.js';
 
 // Uncomment for debuging
@@ -328,10 +330,6 @@ function filter_dishes(event) {
             'div.dish-block'
         );
 
-    const category = 
-        filter_option.parentElement.parentElement.id.replace(
-            '-dish-section', ''
-        );
     const kind = filter_option.dataset.kind;
 
     filter_option.classList.add('filter-option-chosen');
@@ -344,7 +342,6 @@ function filter_dishes(event) {
         if (active_filter_option == filter_option) {
             // show all cards
             unfilter_all(category_section, kind);
-            // remove_from_order(card, category, category_order_wrapper)
             return;
         }
     }
@@ -378,15 +375,11 @@ function run_shopping() {
 function fetchDishes() {
     const main = document.querySelector('main');
 
-    let url = undefined;
-    if (DEBUG) {
-        url = 'http://lab8-api.std-900.ist.mospolytech.ru/labs/api/dishes';
-    } else {
-        url = 'https://edu.std-900.ist.mospolytech.ru/labs/api/dishes';
-    }
-    let api = new URL(url);
+    let dishesUrl = new URL(
+        `${baseUrl}${dishesURI}?api_key=${apiKey}`
+    );
     // Fetch dishes and construct sections
-    fetch(api, {method: 'GET', api_key: 'ea3b214c-57f1-48a8-836f-6a2446e2c634'})
+    fetch(dishesUrl, {method: 'GET'})
         .then(response => response.json())
         .then(
             dishes => {
