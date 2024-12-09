@@ -154,7 +154,7 @@ function constructOrderOutput(parentElement) {
     parentElement.prepend(orderWrapper);
     parentElement.prepend(dishInputFormHeader);
 }
-function createBanner(text) {
+function createBanner(text, reload = false) {
     // Create the section element
     const section = document.createElement('section');
     section.className = 'combo-checker';
@@ -176,6 +176,9 @@ function createBanner(text) {
     button.textContent = 'Окей 👌🏼';
     button.addEventListener('click', () => {
         section.remove();
+        if (reload) {
+            location.reload();
+        }
     });
     
     // Append the paragraph and button to the banner
@@ -192,7 +195,7 @@ function createBanner(text) {
 function validateDishes(event) {
     const orderDishes = JSON.parse(localStorage.getItem('orderDishes'));
     const length = Object.keys(orderDishes).length;
-    
+
     let correct = true;
     let bannerText = '';
 
@@ -266,6 +269,12 @@ function validateDishes(event) {
         createBanner(bannerText);
     }
 }
+function clearOrder(event = null) {
+    const orderForm = document.querySelector('form#order');
+    localStorage.setItem('orderDishes', JSON.stringify({}));
+    orderForm.reset();
+}
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function checkSenitizeSend(event) {
     event.preventDefault(); // Prevent the default form submission
@@ -273,47 +282,73 @@ function checkSenitizeSend(event) {
     let bannerText = '';
 
     const form = event.target;
-    // const subscribeCheckbox = form.querySelector('input[name="subscribe"]');
-    // if (subscribeCheckbox && subscribeCheckbox.checked) {
-    //     subscribeCheckbox.value = true;
-    // }
-    // console.log(form);
+    const subscribeCheckbox = form.querySelector('input[name="subscribe"]');
+    if (subscribeCheckbox && subscribeCheckbox.checked) {
+        subscribeCheckbox.value = true;
+    }
     const formData = new FormData(form);
 
     // chack if the time (if required) exists
-    // if (
-    //     formData.get('delivery_type') === 'by_time' 
-    //     && !formData.get('delivery_time')
-    // ) {
-    //     bannerText = 'Укажите время доставки';
-    //     createBanner(bannerText);
-    //     return;
-    // }
+    if (
+        formData.get('delivery_type') === 'by_time' 
+        && !formData.get('delivery_time')
+    ) {
+        bannerText = 'Укажите время доставки';
+        createBanner(bannerText);
+        return;
+    }
     // Send the form data to the server using fetch
     const sendOrderUrl = new URL(
         `${baseUrl}${ordersURI}?api_key=${apiKey}`
     );
     fetch(sendOrderUrl, {method: 'POST', body: formData})
-        .then(response => response.json())
-        .then(data => {
-            bannerText = data;
-            createBanner(bannerText);
-            console.log('Success:', data);
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 422) {
+                    throw new Error(
+                        'Ошибка обработки заказа. Попробуйте снова'
+                    );
+                } else if (response.status === 404) {
+                    throw new Error(
+                        'Ошибка при отправки заказа. Попробуйте снова'
+                    );
+                } else if (response.status === 500) {
+                    throw new Error(
+                        'Ошибка сервера. Попробуйте позже'
+                    );
+                } else {
+                    throw new Error(
+                        `Неизвестная ошибка: ${response.statusText}`
+                    );
+                }
+            }
+            return response.json();
+        })
+        .then(() => {
+            bannerText = 'Ваш заказ успешно оформлен';
+            createBanner(bannerText, true);
+            clearOrder();
         })
         .catch(error => {
-            bannerText = error;
+            bannerText = error.message;
             createBanner(bannerText);
-            console.error('Error:', error);
+            console.error('Error:', error.message);
         });
 }
 async function createOrderPart() {
-    const orderFormPart = document.getElementById('order-form-part');
-    const orderFormButton = 
-        document.querySelector('button.input-form-button[type="submit"]');
     const orderForm = document.querySelector('form#order');
-
-    orderFormButton.addEventListener('click', validateDishes);
+    const orderFormPart = document.getElementById('order-form-part');
+    const orderFormSendButton = 
+        document.querySelector('button.input-form-button[type="submit"]');
+    const orderFormResetButton = 
+        document.querySelector('button.input-form-button[type="reset"]');
+        
+    orderFormSendButton.addEventListener('click', validateDishes);
     orderForm.addEventListener('submit', checkSenitizeSend);
+    orderFormResetButton.addEventListener('click', () => {
+        clearOrder();
+        location.reload();
+    });
     
     constructOrderOutput(orderFormPart);
 }
