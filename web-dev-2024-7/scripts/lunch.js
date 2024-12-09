@@ -527,7 +527,11 @@ function run_shopping() {
 
 function fetchDishes() {
     const main = document.querySelector('main');
-    let api = new URL('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
+    // Work with localhost
+    let api = 
+        new URL('http://lab7-api.std-900.ist.mospolytech.ru/api/dishes');
+    // // Rigth source (doesn't work)
+    // let api = new URL('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
 
     // Fetch dishes and construct sections
     fetch(api, {method: 'GET'})
