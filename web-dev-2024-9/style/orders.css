@@ -145,13 +145,22 @@
 }
 .label-info {
     display: flex;
+    align-items: center;
     width: 100%;
 }
 .label-info-column {
     text-align: left;
+
+    margin: 0 !important;
     width: 50%;
 }
-
+textarea#comment-text {
+    width: 100% !important;
+    height: 120px !important;
+    font-size: 20px;
+    font-family: "Montserrat", sans-serif;
+    max-width: none !important;
+}
 /* .container {
     display: grid;
     grid-template-columns: 1fr 2fr;

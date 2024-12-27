@@ -65,7 +65,7 @@ function constructShowDialog(orderJSON, contentsDict, cost, deliveryTime) {
             <hr>
             <div class="dialog-bottom">
                 <button id="dialog-ok-button"
-                class="dialog-bottom-button">
+                  class="dialog-bottom-button">
                     Ок
                 </button>
             </div>
@@ -180,20 +180,25 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
                 </button>
             </div>
             <hr>
-            <div class="dialog-main">
+            <form id="edit-order" class="dialog-main"
+                method="post" action="https://httpbin.org/post">
 
-            </div>
+            </form>
             <hr>
             <div class="dialog-bottom">
-                <button id="dialog-ok-button"
-                class="dialog-bottom-button">
-                    Ок
+                <button id="dialog-cancel-button"
+                  class="dialog-bottom-button">
+                    Отмена
+                </button>
+                <button id="dialog-save-button" form="edit-order"
+                  type="submit" class="dialog-bottom-button save-button">
+                    Сохранить
                 </button>
             </div>
         </div>
     `;
     
-    const dialogMain = section.querySelector('div.dialog-main');
+    const dialogMain = section.querySelector('form.dialog-main');
 
     let comment = orderJSON.comment;
     if (!comment) {
@@ -214,9 +219,10 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
         <h3 class="label-info-heading">Доставка</h3>
         <section id="delivery-section" class="label-info-section">
             <div class="label-info">
-                <p class="label-info-column">Имя получателя</p>
-                <p id="name-info"
-                    class="label-info-column">${orderJSON.full_name}</p>
+                <label class="label-info-column" 
+                  for="name">Имя</label>
+                <input id="name" class="input-form-item" type="text"
+                  name="full_name" value="${orderJSON.full_name}" required>
             </div>
             <div class="label-info">
                 <p class="label-info-column">Адрес доставки</p>
@@ -227,18 +233,21 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
                 <p class="label-info-column">${deliveryTime}</p>
             </div>
             <div class="label-info">
-                <p class="label-info-column">Телефон</p>
-                <p class="label-info-column">${orderJSON.phone}</p>
+                <label class="label-info-column" for="phone">Телефон</label>
+                <input id="phone" class="label-info-column input-form-item"
+                  type="tel" name="phone" value="${orderJSON.phone}" required>
             </div>
             <div class="label-info">
-                <p class="label-info-column">Email</p>
-                <p class="label-info-column">${orderJSON.email}</p>
+                <label class="label-info-column" for="email">Email</label>
+                <input id="email" class="label-info-column input-form-item"
+                  type="email" name="email" value="${orderJSON.email}" required>
             </div>
         </section>
 
         <h3 class="label-info-heading">Комментарий</h3>
         <section id="comment-section" class="label-info-section">
-            <p id="comment-text">${comment}</p>
+            <textarea id="comment-text" class="input-form-item"
+                name="comment">${comment}</textarea>
         </section>
 
         <h3 class="label-info-heading">Состав заказа</h3>
@@ -269,7 +278,6 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
                 (${contentsDict[category]["price"]}₽)
             </p>
         `;
-        console.log(cost);
         contentsElement.appendChild(categoryBlock);
     }
 
@@ -277,7 +285,7 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
     dialogClose.addEventListener('click', () => {
         section.remove();
     });
-    const cancelButton = section.querySelector('button#dialog-ok-button');
+    const cancelButton = section.querySelector('button#dialog-cancel-button');
     cancelButton.addEventListener('click', () => {
         section.remove();
     });
@@ -398,7 +406,9 @@ function constructOrder(orderJSON, contentsDict, contents, cost, orderIndex) {
     );
     // edit order function
     row.querySelector('#edit-order').addEventListener(
-        'click', () => (undefined)
+        'click', () => constructEditDialog(
+            orderJSON, contentsDict, cost, deliveryTime
+        )
     );
     // delete order function
     row.querySelector('#delete-order').addEventListener(
