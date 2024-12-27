@@ -73,6 +73,10 @@ section > div {
 	background-color: rgba(189, 189, 189, 0.3);
 	backdrop-filter: blur(5px);
 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	transition: 0.3s ease;
 }
 

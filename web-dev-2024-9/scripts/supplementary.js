@@ -1,4 +1,4 @@
-let DEBUG = false;
+let DEBUG = true;
 
 
 export let baseUrl = undefined;

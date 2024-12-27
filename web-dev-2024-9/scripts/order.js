@@ -4,7 +4,7 @@ import {
     baseUrl, apiKey,
     dishesURI, ordersURI
 } from './supplementary.js';
-    
+
 
 let total = 0;
 
@@ -275,7 +275,6 @@ function clearOrder(event = null) {
     orderForm.reset();
 }
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function checkSenitizeSend(event) {
     event.preventDefault(); // Prevent the default form submission
 
