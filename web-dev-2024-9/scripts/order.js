@@ -176,6 +176,7 @@ function createBanner(text, reload = false) {
     button.textContent = 'Окей 👌🏼';
     button.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
         if (reload) {
             location.reload();
         }
@@ -190,6 +191,7 @@ function createBanner(text, reload = false) {
     
     // Append the section to the body or a specific parent element
     document.querySelector('div.wrapper').appendChild(section);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
 function validateDishes(event) {
