@@ -43,6 +43,8 @@
 .dialog {
     width: 55vw;
     height: min-content;
+    max-height: 90vh;
+    overflow-y: auto;
 	
 	position: fixed;
 	z-index: 1000;
@@ -70,9 +72,6 @@
     align-items: center;
 
     margin-bottom: 20px;
-}
-.dialog-heading {
-
 }
 .dialog-close {
     display: flex;
@@ -141,7 +140,7 @@
 .label-info-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
 }
 .label-info {
     display: flex;
@@ -152,43 +151,18 @@
     text-align: left;
 
     margin: 0 !important;
-    width: 50%;
+    width: 50% !important;
+    max-width: none !important;
 }
 textarea#comment-text {
     width: 100% !important;
-    height: 120px !important;
+    height: 70px !important;
     font-size: 20px;
     font-family: "Montserrat", sans-serif;
     max-width: none !important;
 }
-/* .container {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-    border: 1px solid #000;
-    padding: 10px;
-  }
-  .header, .comment, .order-total {
-    grid-column: 1 / -1;
-    border: 1px solid #000;
-    padding: 5px;
-  }
-  .delivery-labels, .delivery-info {
-    border: 1px solid #000;
-    padding: 5px;
-  }
-  .comment {
-    border: 1px solid #000;
-    padding: 5px;
-  }
-  .order-items {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-    border: 1px solid #000;
-    padding: 5px;
-  }
-  .order-total {
-    text-align: right;
-  } */
-
+input#delivery-time {
+    font-weight: 450;
+    font-size: 20px !important;
+    font-family: "Montserrat", sans-serif !important;
+}

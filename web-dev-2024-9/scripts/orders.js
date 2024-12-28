@@ -1,6 +1,5 @@
 import {
     categoryNamesDictionary,
-    categoryOrder,
     baseUrl, apiKey,
     dishesURI, ordersURI
 } from './supplementary.js';
@@ -28,6 +27,7 @@ function createBanner(text, reload = false) {
     button.textContent = 'Окей 👌🏼';
     button.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
         if (reload) {
             location.reload();
         }
@@ -130,7 +130,7 @@ function constructShowDialog(orderJSON, contentsDict, cost, deliveryTime) {
     `;
     const contentsElement = 
         dialogMain.querySelector('section#contents-section');
-    console.log(contentsElement);
+
     for (let category in contentsDict) {
         const categoryBlock = document.createElement('div');
         categoryBlock.classList.add("label-info");
@@ -148,23 +148,103 @@ function constructShowDialog(orderJSON, contentsDict, cost, deliveryTime) {
                 (${contentsDict[category]["price"]}₽)
             </p>
         `;
-        console.log(cost);
         contentsElement.appendChild(categoryBlock);
     }
 
     const dialogClose = section.querySelector('button.dialog-close');
     dialogClose.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
     });
     const cancelButton = section.querySelector('button#dialog-ok-button');
     cancelButton.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
     });
 
     // Append the section to the body or a specific parent element
-    document.querySelector('div.wrapper').appendChild(section);
+    document.querySelector('body').prepend(section);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
+
+function checkSenitizeSendOrder(event, defaultDeliveryTime, orderId) {
+    const form = event.target;
+    const formData = new FormData(form);
+
+    let bannerText = '';
+    const deliveryTime = formData.get('delivery_time');
+    if (
+        formData.get('delivery_type') === 'by_time' 
+        && !deliveryTime
+    ) {
+        bannerText = 'Укажите время доставки';
+        createBanner(bannerText);
+        return;
+    }
+    const nowDate = new Date();
+    const [currentYear, currentMonth, currentDate] = [
+        nowDate.getFullYear(),
+        nowDate.getMonth(),
+        nowDate.getDate(),
+    ];
+    const [storedHours, storedMinutes]
+        = deliveryTime.split(':').map(Number);
+
+    const deliveryDate = new Date(
+        currentYear,
+        currentMonth,
+        currentDate,
+        storedHours,
+        storedMinutes
+    );
+    if (
+        defaultDeliveryTime !== deliveryTime
+        && formData.get('delivery_type') === 'by_time'
+        && formData.get('delivery_time')
+        && deliveryDate <= nowDate
+    ) {
+        bannerText = 'Выберите время позже настоящего';
+        createBanner(bannerText);
+        return;
+    }
+    const editOrderUrl = new URL(
+        `${baseUrl}${ordersURI}/${orderId}?api_key=${apiKey}`
+    );
+    fetch(editOrderUrl, {method: 'PUT', body: formData})
+        .then(response => {
+            if (!response.ok) {
+                if (
+                    response.status === 404
+                    || response.status === 422
+                ) {
+                    throw new Error(
+                        `${response.status}
+                            Ошибка обработки заказа. Попробуйте снова`
+                    );
+                } else if (response.status === 500) {
+                    throw new Error(
+                        `${response.status} Ошибка сервера. Попробуйте позже`
+                    );
+                } else {
+                    throw new Error(
+                        `${response.statusText} Неизвестная ошибка`
+                    );
+                }
+            }
+            return response.json();
+        })
+        .then(() => {
+            bannerText = 'Заказ успешно изменён ✅';
+            document.querySelector('section.combo-checker').remove();
+            createBanner(bannerText, true);
+        })
+        .catch(error => {
+            bannerText = error.message;
+            createBanner(bannerText);
+            console.error('Error:', error.message);
+        });
+}
 
 function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
     // Create the section element
@@ -172,7 +252,8 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
     section.className = 'combo-checker';
     
     section.innerHTML = `
-        <div class="dialog">
+        <form id="edit-order" class="dialog"
+          method="post" action="https://httpbin.org/post">
             <div class="dialog-heading-close">
                 <h2 class="dialog-heading">Просмотр заказа</h2>
                 <button class="dialog-close">
@@ -180,30 +261,41 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
                 </button>
             </div>
             <hr>
-            <form id="edit-order" class="dialog-main"
-                method="post" action="https://httpbin.org/post">
+            <div class="dialog-main">
 
-            </form>
+            </div>
             <hr>
             <div class="dialog-bottom">
                 <button id="dialog-cancel-button"
                   class="dialog-bottom-button">
                     Отмена
                 </button>
-                <button id="dialog-save-button" form="edit-order"
+                <button id="dialog-save-button"
                   type="submit" class="dialog-bottom-button save-button">
                     Сохранить
                 </button>
             </div>
-        </div>
+        </form>
     `;
     
-    const dialogMain = section.querySelector('form.dialog-main');
+    const dialogMain = section.querySelector('div.dialog-main');
 
     let comment = orderJSON.comment;
     if (!comment) {
-        comment = 'Без комментариев';
+        comment = '';
     }
+    
+    let rapidChecked = null;
+    let byTimeChecked = null;
+    if (orderJSON.delivery_type == "by_time"
+      && orderJSON.hasOwnProperty('delivery_time')) {
+        rapidChecked = '';
+        byTimeChecked = 'checked';
+    } else {
+        rapidChecked = 'checked';
+        byTimeChecked = '';
+    }
+    
     
     dialogMain.innerHTML = `
         <section id="created_at-section" class="label-info-section">
@@ -221,16 +313,45 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
             <div class="label-info">
                 <label class="label-info-column" 
                   for="name">Имя</label>
-                <input id="name" class="input-form-item" type="text"
-                  name="full_name" value="${orderJSON.full_name}" required>
+                <input id="name" class="label-info-column input-form-item"
+                  type="text" name="full_name" 
+                  value="${orderJSON.full_name}" required>
             </div>
             <div class="label-info">
-                <p class="label-info-column">Адрес доставки</p>
-                <p class="label-info-column">${orderJSON.delivery_address}</p>
+                <label class="label-info-column" for="address">
+                    Адрес доставки
+                </label>
+                <input id="address" class="label-info-column input-form-item"
+                  name="delivery_address"
+                  type="text" value="${orderJSON.delivery_address}" required>
             </div>
             <div class="label-info">
-                <p class="label-info-column">Время доставки</p>
-                <p class="label-info-column">${deliveryTime}</p>
+                <legend class="label-info-column">Тип доставки</legend>
+                <fieldset id="choose-time" class="label-info-column">
+                    <input class="choose-time-option"
+                      type="radio" id="rapid-delivery-option"
+                      name="delivery_type" value="now" ${rapidChecked} required>
+                    <label class="choose-time-option" 
+                      for="rapid-delivery-option">
+                        Как можно скорее
+                    </label><br>
+                    <input class="choose-time-option"
+                      type="radio" id="bytime-delivery-option"
+                      name="delivery_type" value="by_time" ${byTimeChecked}>
+                    <label class="choose-time-option"
+                      for="bytime-delivery-option">
+                        К указанному времени
+                    </label><br>
+                </fieldset>
+            </div>
+            <div class="label-info">
+                <label class="label-info-column"
+                  for="delivery-time">Время доставки
+                </label>
+                <input type="time" id="delivery-time"
+                  class="label-info-column input-form-item"
+                  name="delivery_time" min="07:00" max="23:00" step="300"
+                  value="${deliveryTime}">
             </div>
             <div class="label-info">
                 <label class="label-info-column" for="phone">Телефон</label>
@@ -247,7 +368,8 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
         <h3 class="label-info-heading">Комментарий</h3>
         <section id="comment-section" class="label-info-section">
             <textarea id="comment-text" class="input-form-item"
-                name="comment">${comment}</textarea>
+              name="comment" placeholder="Добавить комментарий">
+${comment}</textarea>
         </section>
 
         <h3 class="label-info-heading">Состав заказа</h3>
@@ -260,7 +382,6 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
     `;
     const contentsElement = 
         dialogMain.querySelector('section#contents-section');
-    console.log(contentsElement);
     for (let category in contentsDict) {
         const categoryBlock = document.createElement('div');
         categoryBlock.classList.add("label-info");
@@ -284,14 +405,26 @@ function constructEditDialog(orderJSON, contentsDict, cost, deliveryTime) {
     const dialogClose = section.querySelector('button.dialog-close');
     dialogClose.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
     });
     const cancelButton = section.querySelector('button#dialog-cancel-button');
     cancelButton.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
+    });
+    const orderForm = section.querySelector('form#edit-order');
+    orderForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        checkSenitizeSendOrder(
+            event,
+            deliveryTime,
+            orderJSON.id
+        );
     });
     
     // Append the section to the body or a specific parent element
-    document.querySelector('div.wrapper').appendChild(section);
+    document.querySelector('body').prepend(section);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
 
@@ -303,7 +436,7 @@ async function deleteOrder(orderId, section) {
         if (!deleteResponse.ok) {
             throw new Error(`Order response status: ${deleteResponse.status}`);
         }
-        section.remove();       
+        section.remove();
         createBanner("Заказ успешно удалён ✅", true);
 
     } catch (error) {
@@ -345,10 +478,12 @@ function constructDeleteDialog(orderJSON) {
     const dialogClose = section.querySelector('button.dialog-close');
     dialogClose.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
     });
     const cancelButton = section.querySelector('button#dialog-cancel-button');
     cancelButton.addEventListener('click', () => {
         section.remove();
+        document.querySelector('body').style.overflow = '';
     });
     const deleteOrderButton = section.querySelector(
         'button#dialog-delete-button'
@@ -357,7 +492,8 @@ function constructDeleteDialog(orderJSON) {
         deleteOrder(orderJSON.id, section);
     });
     // Append the section to the body or a specific parent element
-    document.querySelector('div.wrapper').appendChild(section);
+    document.querySelector('body').prepend(section);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
 function constructOrder(orderJSON, contentsDict, contents, cost, orderIndex) {
@@ -476,9 +612,6 @@ async function fetchOrders() {
         const orders = await orderResponse.json();
         const dishes = await dishesResponse.json();
 
-        console.log(orders);
-        console.log(dishes);
-        
         const parentElement = document.querySelector('#orders-table > tbody');
 
         // Create rows for orders
@@ -487,17 +620,9 @@ async function fetchOrders() {
             let orderJSON = orders[len - (i + 1)];
             await createAppendOrderRow(orderJSON, dishes, parentElement, i + 1);
         }
-        // const promises = orders.map(orderJSON => createAppendOrderRow(
-        //     orderJSON, orderRowList, orderIndex++)
-        // );
-        // await Promise.all(promises);
     } catch (error) {
         console.error(error);
     }
-    // for (let i = 0, len = orders.length; i < len; i++) {
-    //     let orderJSON = orders[len - i];
-    //     await createAppendOrderRow(orderJSON, parentElement, i);
-    // }
 }
 
 

@@ -276,9 +276,7 @@ function clearOrder(event = null) {
 }
 
 function checkSenitizeSend(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    let bannerText = '';
+    event.preventDefault();
 
     const form = event.target;
     const subscribeCheckbox = form.querySelector('input[name="subscribe"]');
@@ -287,12 +285,39 @@ function checkSenitizeSend(event) {
     }
     const formData = new FormData(form);
 
-    // chack if the time (if required) exists
+    // check if the time (if required) exists
+    let bannerText = '';
+    const deliveryTime = formData.get('delivery_time');
     if (
         formData.get('delivery_type') === 'by_time' 
-        && !formData.get('delivery_time')
+        && !deliveryTime
     ) {
         bannerText = 'Укажите время доставки';
+        createBanner(bannerText);
+        return;
+    }
+    const nowDate = new Date();
+    const [currentYear, currentMonth, currentDate] = [
+        nowDate.getFullYear(),
+        nowDate.getMonth(),
+        nowDate.getDate(),
+    ];
+    const [storedHours, storedMinutes]
+        = deliveryTime.split(':').map(Number);
+
+    const deliveryDate = new Date(
+        currentYear,
+        currentMonth,
+        currentDate,
+        storedHours,
+        storedMinutes
+    );
+    if (
+        formData.get('delivery_type') === 'by_time'
+        && formData.get('delivery_time')
+        && deliveryDate <= nowDate
+    ) {
+        bannerText = 'Выберите время позже настоящего';
         createBanner(bannerText);
         return;
     }
